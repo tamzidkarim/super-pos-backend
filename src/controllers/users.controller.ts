@@ -2,13 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 import { Container } from 'typedi';
 import { User } from '@interfaces/users.interface';
 import { UserService } from '@services/users.service';
-
 export class UserController {
   public user = Container.get(UserService);
 
   public getUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const findAllUsersData: User[] = await this.user.findAllUser();
+      const findAllUsersData = await this.user.findAllUser();
 
       res.status(200).json({ data: findAllUsersData, message: 'findAll' });
     } catch (error) {

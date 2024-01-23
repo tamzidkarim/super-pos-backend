@@ -3,11 +3,13 @@ import { Service } from 'typedi';
 import { HttpException } from '@exceptions/httpException';
 import { User } from '@interfaces/users.interface';
 import { UserModel } from '@models/users.model';
+import { profiles } from '@schemas';
+import { db } from '@/db';
 
 @Service()
 export class UserService {
-  public async findAllUser(): Promise<User[]> {
-    const users: User[] = UserModel;
+  public async findAllUser() {
+    const users = db.select().from(profiles);
     return users;
   }
 
