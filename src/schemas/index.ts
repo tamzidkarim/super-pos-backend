@@ -1,3 +1,4 @@
 import { profiles } from './profiles.schema';
+import { products, NewProduct, Product } from './products/products.schema';
 
-export { profiles };
+export { profiles, products, NewProduct, Product };
