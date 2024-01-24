@@ -1,9 +1,9 @@
-import { pgTable, serial, text } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text } from 'drizzle-orm/pg-core';
 
 export const units = pgTable('units', {
-  id: serial('id').primaryKey(),
-  name: text('name'),
+  id: uuid('id').primaryKey().notNull(),
+  name: text('name').notNull(),
 });
 
-export type Product = typeof units.$inferSelect;
-export type NewProduct = typeof units.$inferInsert;
+export type Unit = typeof units.$inferSelect;
+export type NewUnit = typeof units.$inferInsert;
