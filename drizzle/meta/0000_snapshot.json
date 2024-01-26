@@ -1,0 +1,502 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "profiles": {
+      "name": "profiles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avatar_url": {
+          "name": "avatar_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "website": {
+          "name": "website",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "profiles_id_fkey": {
+          "name": "profiles_id_fkey",
+          "tableFrom": "profiles",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "profiles_username_key": {
+          "columns": [
+            "username"
+          ],
+          "nullsNotDistinct": false,
+          "name": "profiles_username_key"
+        }
+      }
+    },
+    "products": {
+      "name": "products",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "units": {
+      "name": "units",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "properties": {
+      "name": "properties",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "categories_parent_id_fkey": {
+          "name": "categories_parent_id_fkey",
+          "tableFrom": "categories",
+          "tableTo": "categories",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "user_favorite_products": {
+      "name": "user_favorite_products",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_favorite_products_product_id_fkey": {
+          "name": "user_favorite_products_product_id_fkey",
+          "tableFrom": "user_favorite_products",
+          "tableTo": "products",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_favorite_products_user_id_fkey": {
+          "name": "user_favorite_products_user_id_fkey",
+          "tableFrom": "user_favorite_products",
+          "tableTo": "profiles",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_favorite_products_pkey": {
+          "name": "user_favorite_products_pkey",
+          "columns": [
+            "user_id",
+            "product_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "product_categories": {
+      "name": "product_categories",
+      "schema": "",
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category_id": {
+          "name": "category_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "product_categories_category_id_fkey": {
+          "name": "product_categories_category_id_fkey",
+          "tableFrom": "product_categories",
+          "tableTo": "categories",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "product_categories_product_id_fkey": {
+          "name": "product_categories_product_id_fkey",
+          "tableFrom": "product_categories",
+          "tableTo": "products",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "product_categories_pkey": {
+          "name": "product_categories_pkey",
+          "columns": [
+            "product_id",
+            "category_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "product_units": {
+      "name": "product_units",
+      "schema": "",
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "unit_id": {
+          "name": "unit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "product_units_product_id_fkey": {
+          "name": "product_units_product_id_fkey",
+          "tableFrom": "product_units",
+          "tableTo": "products",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "product_units_unit_id_fkey": {
+          "name": "product_units_unit_id_fkey",
+          "tableFrom": "product_units",
+          "tableTo": "units",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "unit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "product_units_pkey": {
+          "name": "product_units_pkey",
+          "columns": [
+            "product_id",
+            "unit_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "product_properties": {
+      "name": "product_properties",
+      "schema": "",
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "property_id": {
+          "name": "property_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "product_properties_product_id_fkey": {
+          "name": "product_properties_product_id_fkey",
+          "tableFrom": "product_properties",
+          "tableTo": "products",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "product_properties_property_id_fkey": {
+          "name": "product_properties_property_id_fkey",
+          "tableFrom": "product_properties",
+          "tableTo": "properties",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "property_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "product_properties_pkey": {
+          "name": "product_properties_pkey",
+          "columns": [
+            "product_id",
+            "property_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "key_status": {
+      "name": "key_status",
+      "values": {
+        "default": "default",
+        "valid": "valid",
+        "invalid": "invalid",
+        "expired": "expired"
+      }
+    },
+    "key_type": {
+      "name": "key_type",
+      "values": {
+        "aead-ietf": "aead-ietf",
+        "aead-det": "aead-det",
+        "hmacsha512": "hmacsha512",
+        "hmacsha256": "hmacsha256",
+        "auth": "auth",
+        "shorthash": "shorthash",
+        "generichash": "generichash",
+        "kdf": "kdf",
+        "secretbox": "secretbox",
+        "secretstream": "secretstream",
+        "stream_xchacha20": "stream_xchacha20"
+      }
+    },
+    "factor_type": {
+      "name": "factor_type",
+      "values": {
+        "totp": "totp",
+        "webauthn": "webauthn"
+      }
+    },
+    "factor_status": {
+      "name": "factor_status",
+      "values": {
+        "unverified": "unverified",
+        "verified": "verified"
+      }
+    },
+    "aal_level": {
+      "name": "aal_level",
+      "values": {
+        "aal1": "aal1",
+        "aal2": "aal2",
+        "aal3": "aal3"
+      }
+    },
+    "code_challenge_method": {
+      "name": "code_challenge_method",
+      "values": {
+        "s256": "s256",
+        "plain": "plain"
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
