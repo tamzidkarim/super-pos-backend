@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Container } from 'typedi';
 import { ProductService } from '@services/products.service';
 import { Product } from '@/schemas';
+import { RequestWithUser } from '@/interfaces/auth.interface';
 
 export class ProductController {
   public product = Container.get(ProductService);
@@ -95,6 +96,19 @@ export class ProductController {
       const category = await this.product.deleteCategory(categoryId);
 
       res.status(200).json({ data: category, message: `Category with ID ${categoryId} has been deleted` });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public addProductToFavorites = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const productId = req.params.id;
+      const userId = req.user?.id || '76ba8e61-a61d-4544-9b7c-1e1763b83168';
+      console.log(userId, productId);
+      const result = await this.product.addProductToFavorites(productId, userId);
+
+      res.status(200).json({ data: result, message: 'Product added to favorites' });
     } catch (error) {
       next(error);
     }

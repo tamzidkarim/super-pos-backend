@@ -22,5 +22,6 @@ export class ProductRoute implements Routes {
     this.router.get(`${this.path}/:id`, this.product.getProductById);
     this.router.patch(`${this.path}/:id`, this.product.updateProduct);
     this.router.delete(`${this.path}/:id`, this.product.deleteProduct);
+    this.router.post(`${this.path}/:id/favorite`, this.product.addProductToFavorites);
   }
 }

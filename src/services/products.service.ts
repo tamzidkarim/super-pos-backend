@@ -1,7 +1,7 @@
 import { db } from '@/db';
 import { HttpException } from '@/exceptions/HttpException';
-import { Product, categories, products, Categories } from '@/schemas';
-import { asc, desc, eq } from 'drizzle-orm';
+import { Product, categories, products, Categories, userFavoriteProducts, NewUserFavoriteProducts } from '@/schemas';
+import { and, asc, desc, eq } from 'drizzle-orm';
 import { Service } from 'typedi';
 
 @Service()
@@ -62,5 +62,15 @@ export class ProductService {
   public async deleteCategory(categoryId: string): Promise<Categories> {
     const deletedCategory = await db.delete(categories).where(eq(categories.id, categoryId)).returning();
     return deletedCategory[0];
+  }
+  public async addProductToFavorites(productId: string, userId: string): Promise<NewUserFavoriteProducts> {
+    const existingFavorite = await db
+      .select()
+      .from(userFavoriteProducts)
+      .where(and(eq(userFavoriteProducts.productId, productId), eq(userFavoriteProducts.userId, userId)));
+
+    if (existingFavorite.length > 0) throw new HttpException(409, `Product with id ${productId} already in favorites`);
+    const result = await db.insert(userFavoriteProducts).values({ productId, userId }).returning();
+    return result[0];
   }
 }

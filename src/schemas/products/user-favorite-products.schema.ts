@@ -18,3 +18,6 @@ export const userFavoriteProducts = pgTable(
     };
   },
 );
+
+export type UserFavoriteProducts = typeof userFavoriteProducts.$inferInsert;
+export type NewUserFavoriteProducts = typeof userFavoriteProducts.$inferInsert;
