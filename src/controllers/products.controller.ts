@@ -70,4 +70,33 @@ export class ProductController {
       next(error);
     }
   };
+  public createProductCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const category = await this.product.createCategory(req.body);
+
+      res.status(200).json({ data: category, message: 'Create a new category' });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public updateProductCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const categoryId = req.params.id;
+      const category = await this.product.updateCategory(categoryId, req.body);
+
+      res.status(200).json({ data: category, message: 'Update category' });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public deleteProductCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const categoryId = req.params.id;
+      const category = await this.product.deleteCategory(categoryId);
+
+      res.status(200).json({ data: category, message: `Category with ID ${categoryId} has been deleted` });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

@@ -51,4 +51,16 @@ export class ProductService {
     }
     return isFlat ? allCategories : categoriesNested;
   }
+  public async createCategory(categoryData: Categories): Promise<Categories> {
+    const newCategory = await db.insert(categories).values(categoryData).returning();
+    return newCategory[0];
+  }
+  public async updateCategory(categoryId: string, categoryData: Categories): Promise<Categories> {
+    const updatedCategory = await db.update(categories).set(categoryData).where(eq(categories.id, categoryId)).returning();
+    return updatedCategory[0];
+  }
+  public async deleteCategory(categoryId: string): Promise<Categories> {
+    const deletedCategory = await db.delete(categories).where(eq(categories.id, categoryId)).returning();
+    return deletedCategory[0];
+  }
 }
