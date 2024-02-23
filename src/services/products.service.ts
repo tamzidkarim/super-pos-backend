@@ -1,6 +1,19 @@
 import { db } from '@/db';
 import { HttpException } from '@/exceptions/HttpException';
-import { Product, categories, products, Categories, userFavoriteProducts, NewUserFavoriteProducts } from '@/schemas';
+import {
+  Product,
+  categories,
+  products,
+  Categories,
+  userFavoriteProducts,
+  NewUserFavoriteProducts,
+  productUnits,
+  NewProductUnit,
+  NewCategories,
+  units,
+  NewUnit,
+  Unit,
+} from '@/schemas';
 import { and, asc, desc, eq } from 'drizzle-orm';
 import { Service } from 'typedi';
 
@@ -51,7 +64,7 @@ export class ProductService {
     }
     return isFlat ? allCategories : categoriesNested;
   }
-  public async createCategory(categoryData: Categories): Promise<Categories> {
+  public async createCategory(categoryData: NewCategories): Promise<NewCategories> {
     const newCategory = await db.insert(categories).values(categoryData).returning();
     return newCategory[0];
   }
@@ -72,5 +85,38 @@ export class ProductService {
     if (existingFavorite.length > 0) throw new HttpException(409, `Product with id ${productId} already in favorites`);
     const result = await db.insert(userFavoriteProducts).values({ productId, userId }).returning();
     return result[0];
+  }
+  public async findAllUnits(): Promise<NewUnit[]> {
+    const allUnits = await db.select().from(units);
+    return allUnits;
+  }
+  public async createUnit(unitData: NewUnit): Promise<NewUnit> {
+    const newUnit = await db.insert(units).values(unitData).returning();
+    return newUnit[0];
+  }
+  public async updateUnit(unitData: Unit): Promise<Unit> {
+    const updatedUnit = await db.insert(units).values(unitData).returning();
+    return updatedUnit[0];
+  }
+  public async deleteUnit(unitId: string): Promise<Unit> {
+    const deletedUnit = await db.delete(units).where(eq(units.id, unitId)).returning();
+    return deletedUnit[0];
+  }
+  public async addUnitToProduct(productId: string, unitId: string, price: string): Promise<NewProductUnit> {
+    const product = await db.select().from(products).where(eq(products.id, productId));
+    if (product.length === 0) {
+      throw new HttpException(404, `Product with id ${productId} not found`);
+    }
+
+    const unit = await db.select().from(units).where(eq(units.id, unitId));
+    if (unit.length === 0) {
+      throw new HttpException(404, `Unit with id ${unitId} not found`);
+    }
+
+    const newProductUnit = await db.insert(productUnits).values({ productId, unitId, price }).returning();
+    if (!newProductUnit) {
+      throw new HttpException(500, 'Failed to add unit to product');
+    }
+    return newProductUnit[0];
   }
 }
