@@ -24,7 +24,7 @@ export class ProductController {
   public getProductById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const productId = req.params.id;
-      const product: Product = await this.product.findProductById(productId);
+      const product = await this.product.findProductById(productId);
 
       res.status(200).json({ data: product, message: 'Find product by Id' });
     } catch (error) {
@@ -133,6 +133,66 @@ export class ProductController {
       const result = await this.product.removeProductFromFavorites(productId, userId);
 
       res.status(200).json({ data: result, message: 'Product removed from favorites' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // get all units
+  public getProductUnits = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const units = await this.product.findAllUnits();
+
+      res.status(200).json({ data: units, message: 'Find all units' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // create new unit
+  public createProductUnit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const unit = await this.product.createUnit(req.body);
+
+      res.status(200).json({ data: unit, message: 'Create a new unit' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // update unit
+  public updateProductUnit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const unitId = req.params.id;
+      const unit = await this.product.updateUnit(unitId, req.body);
+
+      res.status(200).json({ data: unit, message: 'Update unit' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // delete unit
+  public deleteProductUnit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const unitId = req.params.id;
+      const unit = await this.product.deleteUnit(unitId);
+
+      res.status(200).json({ data: unit, message: 'Delete unit' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // add unit to product
+  public addProductUnit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const productId = req.params.id;
+      const unitId = req.body.unitId;
+      const price = req.body.price;
+      const newProductUnit = await this.product.addUnitToProduct(productId, unitId, price);
+
+      res.status(200).json({ data: newProductUnit, message: 'Add unit to product' });
     } catch (error) {
       next(error);
     }

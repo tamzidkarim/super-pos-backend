@@ -15,6 +15,10 @@ export class ProductRoute implements Routes {
   private initializeRoutes() {
     this.router.get(`${this.path}`, this.product.getProducts);
     this.router.get(`${this.path}/categories`, this.product.getProductCategories);
+    this.router.get(`${this.path}/units`, this.product.getProductUnits);
+    this.router.post(`${this.path}/units`, this.product.createProductUnit);
+    this.router.patch(`${this.path}/units/:id`, this.product.updateProductUnit);
+    this.router.delete(`${this.path}/units/:id`, this.product.deleteProductUnit);
     this.router.get(`${this.path}/favorite`, this.product.getAllFavoriteProducts);
     this.router.post(`${this.path}/categories`, this.product.createProductCategory);
     this.router.patch(`${this.path}/categories/:id`, this.product.updateProductCategory);
@@ -24,6 +28,7 @@ export class ProductRoute implements Routes {
     this.router.patch(`${this.path}/:id`, this.product.updateProduct);
     this.router.delete(`${this.path}/:id`, this.product.deleteProduct);
     this.router.post(`${this.path}/:id/favorite`, this.product.addProductToFavorites);
+    this.router.post(`${this.path}/:id/unit`, this.product.addProductUnit);
     this.router.delete(`${this.path}/:id/favorite`, this.product.removeProductFromFavorites);
   }
 }

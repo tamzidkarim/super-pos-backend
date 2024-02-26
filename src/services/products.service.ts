@@ -14,6 +14,7 @@ import {
   NewUnit,
   Unit,
 } from '@/schemas';
+import { productCategories } from '@/schemas/products/product-categories.schema';
 import { and, asc, desc, eq } from 'drizzle-orm';
 import { Service } from 'typedi';
 
@@ -37,9 +38,27 @@ export class ProductService {
     }
     return allProducts;
   }
-  public async findProductById(productId: string): Promise<Product> {
-    const singleProduct = await db.select().from(products).where(eq(products.id, productId));
+  public async findProductById(productId: string) {
+    const singleProduct: Partial<Product & { categories: string[] } & { units: { name: string; price: string }[] }>[] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, productId));
     if (singleProduct.length === 0) throw new HttpException(409, `Product with id ${productId} not found`);
+    const singleProductCat = await db
+      .select({
+        name: categories.name,
+      })
+      .from(productCategories)
+      .innerJoin(categories, eq(productCategories.categoryId, categories.id))
+      .where(eq(productCategories.productId, productId));
+
+    const singleProductUnits = await db
+      .select({ name: units.name, price: productUnits.price })
+      .from(productUnits)
+      .innerJoin(units, eq(productUnits.unitId, units.id))
+      .where(eq(productUnits.productId, productId));
+    singleProduct[0].categories = singleProductCat.map(cat => cat.name);
+    singleProduct[0].units = singleProductUnits.map(unit => ({ name: unit.name, price: unit.price }));
     return singleProduct[0];
   }
   public async createProduct(productData: Product): Promise<Product> {
@@ -119,8 +138,8 @@ export class ProductService {
     const newUnit = await db.insert(units).values(unitData).returning();
     return newUnit[0];
   }
-  public async updateUnit(unitData: Unit): Promise<Unit> {
-    const updatedUnit = await db.insert(units).values(unitData).returning();
+  public async updateUnit(unitId: string, unitData: Unit): Promise<Unit> {
+    const updatedUnit = await db.update(units).set(unitData).where(eq(units.id, unitId)).returning();
     return updatedUnit[0];
   }
   public async deleteUnit(unitId: string): Promise<Unit> {
