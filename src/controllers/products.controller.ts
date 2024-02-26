@@ -7,12 +7,13 @@ import { RequestWithUser } from '@/interfaces/auth.interface';
 export class ProductController {
   public product = Container.get(ProductService);
 
-  public getProducts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getProducts = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
+      const userId = req.user?.id || '88ed344f-73bb-49f8-be63-b4b36b1926ca';
       const page = Number(req.query.page);
       const pageSize = Number(req.query.pageSize);
       const orderBy = req.query.orderBy as string;
-      const products = await this.product.findAllProducts(page, pageSize, orderBy);
+      const products = await this.product.findAllProducts(page, pageSize, orderBy, userId);
 
       res.status(200).json({ data: products, message: 'Find all products' });
     } catch (error) {
@@ -101,6 +102,17 @@ export class ProductController {
     }
   };
 
+  public getAllFavoriteProducts = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user?.id || '76ba8e61-a61d-4544-9b7c-1e1763b83168';
+      const favoriteProducts = await this.product.getAllFavoriteProducts(userId);
+
+      res.status(200).json({ data: favoriteProducts, message: 'Find all favorite products' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public addProductToFavorites = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const productId = req.params.id;
@@ -109,6 +121,18 @@ export class ProductController {
       const result = await this.product.addProductToFavorites(productId, userId);
 
       res.status(200).json({ data: result, message: 'Product added to favorites' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public removeProductFromFavorites = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const productId = req.params.id;
+      const userId = req.user?.id || '76ba8e61-a61d-4544-9b7c-1e1763b83168';
+      const result = await this.product.removeProductFromFavorites(productId, userId);
+
+      res.status(200).json({ data: result, message: 'Product removed from favorites' });
     } catch (error) {
       next(error);
     }

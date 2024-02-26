@@ -6,5 +6,6 @@ export const products = pgTable('products', {
   description: text('description'),
 });
 
-export type Product = typeof products.$inferSelect;
+export type Product = typeof products.$inferSelect & { isFavorite?: boolean };
+
 export type NewProduct = typeof products.$inferInsert;

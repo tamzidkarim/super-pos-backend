@@ -19,14 +19,22 @@ import { Service } from 'typedi';
 
 @Service()
 export class ProductService {
-  public async findAllProducts(page = 1, pageSize = 10, orderBy = 'asc'): Promise<Product[]> {
+  public async findAllProducts(page = 1, pageSize = 10, orderBy = 'asc', userId: string): Promise<Product[]> {
     const offset = (page - 1) * pageSize;
-    const allProducts = await db
+    const allProducts: Product[] = await db
       .select()
       .from(products)
       .limit(pageSize)
       .offset(offset)
       .orderBy(orderBy == 'asc' ? asc(products.id) : desc(products.id));
+
+    if (userId) {
+      const allFavProducts = await db.select().from(userFavoriteProducts).where(eq(userFavoriteProducts.userId, userId));
+      allProducts.forEach(product => {
+        product.isFavorite = allFavProducts.some(fav => fav.productId === product.id);
+      });
+      return allProducts;
+    }
     return allProducts;
   }
   public async findProductById(productId: string): Promise<Product> {
@@ -84,6 +92,23 @@ export class ProductService {
 
     if (existingFavorite.length > 0) throw new HttpException(409, `Product with id ${productId} already in favorites`);
     const result = await db.insert(userFavoriteProducts).values({ productId, userId }).returning();
+    return result[0];
+  }
+  // get all favorite products
+  public async getAllFavoriteProducts(userId: string): Promise<Product[]> {
+    const allFavProducts = await db
+      .select({ id: products.id, name: products.name, description: products.description })
+      .from(products)
+      .leftJoin(userFavoriteProducts, eq(userFavoriteProducts.productId, products.id))
+      .where(eq(userFavoriteProducts.userId, userId));
+    return allFavProducts;
+  }
+  // remove product from favorites
+  public async removeProductFromFavorites(productId: string, userId: string): Promise<NewUserFavoriteProducts> {
+    const result = await db
+      .delete(userFavoriteProducts)
+      .where(and(eq(userFavoriteProducts.productId, productId), eq(userFavoriteProducts.userId, userId)))
+      .returning();
     return result[0];
   }
   public async findAllUnits(): Promise<NewUnit[]> {
